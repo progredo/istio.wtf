@@ -2,4 +2,6 @@
 title: WTF is the difference between mTLS and TLS?
 ---
 
+::: {style="text-align: center"}
 ![Ketchup or Catsup?](media/ketchup-catsup.jpg)
+:::
