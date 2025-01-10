@@ -1,0 +1,5 @@
+---
+title: WTF is the difference between mTLS and TLS?
+---
+
+![Ketchup or Catsup?](media/ketchup-catsup.jpg)
