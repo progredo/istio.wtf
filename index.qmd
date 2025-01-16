@@ -3,4 +3,6 @@ listing:
   contents:
   - "wtfs/*.qmd"
   type: grid
+  # do not include post content in listing
+  max-description-length: 1
 ---
