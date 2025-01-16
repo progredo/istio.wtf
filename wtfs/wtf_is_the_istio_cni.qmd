@@ -1,3 +1,39 @@
 ---
 title: WTF is the Istio CNI?
 ---
+
+::: {style="text-align: center"}
+[![container network interface](media/container-network-interface.png "A cardboard takeout box with an ethernet jack on the side."){width=80%}](https://unsplash.com/photos/small-brown-cardboard-box-with-handle-5R5Trsu1aIM)
+:::
+
+::: {.callout-tip appearance="simple" icon=false}
+**tl;dr** - Istio is **not** a CNI plugin, the [Istio CNI](https://istio.io/latest/docs/setup/additional-setup/cni/) just sets up iptables redirection which forces all pod traffic through the sidecar proxy.
+:::
+
+### CNI and Plugins
+
+The Container Network Interface is the [standard](https://github.com/containernetworking/cni) by which a container runtime (like Docker or containerd) gives users control over how their containers get connected. A [CNI plugin](https://github.com/containernetworking/cni?tab=readme-ov-file#3rd-party-plugins) is any application which implements the CNI standard.
+
+The workflow goes something like:
+
+1. Something asks the runtime to launch a container.
+1. Once the container starts, the runtime passes some information like the name of the network interface assigned to the container to the CNI plugin.
+1. The CNI plugin executes and returns control to the container runtime.
+
+**Here's the important part:** usually when the CNI plugin executes it is setting up network connectivity for the container, but _not always._
+
+The container runtime doesn't actually care if the plugin connected the container to the internet or anything else for that matter, it just cares that the plugin does not return an error. A CNI plugin could just `echo "lol k8s sux" > /etc/motd` for all the container runtime cares.
+
+### The Istio CNI
+
+While the Istio CNI _does_ implement the interface making it a valid CNI plugin it does _not_ configure pod-to-pod networking the way other CNI plugins like Calico and Cilium do. All it does is add some iptables rules which force all the traffic going in or out of the main container in the pod to be redirected through the `istio-proxy` sidecar container which is where all the fancy service mesh stuff happens.
+
+Istio assumes you already have a CNI plugin capable of configuring pod-to-pod networking and it just steps in after that plugin is finished to add the little bits that Istio needs in order to function.
+
+### But Why?
+
+[![](media/ytho.jpg "A meme with the words 'y tho' superimposed onto a painting of Pope Leon X painted by Fernando Botero."){width=40% }](https://imgur.com/gallery/i-got-tired-of-low-res-y-tho-yNlQWRM)
+
+The Istio CNI is totally optional, you can use all the cool features without it. If you do not deploy the Istio CNI what happens instead is that an [init container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) gets added to every pod which has [sidecar injection](https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/) enabled and the init container sets up iptables redirection.
+
+For some users however this is a problem because it means whoever or whaetver is putting pods into their cluster requires some highly [privileged capabilities](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). The CNI solves that problem for those users. Instead of giving cluster users the ability to create highly privilged pods, the cluster admins deploy the Istio CNI and give _it_ the necessary capabilities to set up iptables redirection. Now all their users have to do is create a pod with regular privileges and the Istio CNI handles the rest.
