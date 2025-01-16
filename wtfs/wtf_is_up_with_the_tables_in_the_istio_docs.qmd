@@ -1,0 +1,3 @@
+---
+title: WTF is up with all these tables in the Istio docs?
+---
