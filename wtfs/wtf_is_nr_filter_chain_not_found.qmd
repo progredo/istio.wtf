@@ -1,4 +1,8 @@
 ---
 title: WTF is NR filter chain not found?
 ---
-zomg wut
+
+::: {style="text-align: center"}
+[![subheading](media/coffee-filter-chain.png "alt text"){width=80%}](https://unsplash.com/photos/two-person-pouring-coffee-with-piled-cups-eksqjXTLpak)
+:::
+
