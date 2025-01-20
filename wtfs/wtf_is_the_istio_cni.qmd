@@ -7,7 +7,7 @@ title: WTF is the Istio CNI?
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}
-**tl;dr** - Istio is **not** a CNI plugin, the [Istio CNI](https://istio.io/latest/docs/setup/additional-setup/cni/) just sets up iptables redirection which forces all pod traffic through the sidecar proxy.
+**tl;dr** - Istio is **not** a typical CNI plugin, the [Istio CNI](https://istio.io/latest/docs/setup/additional-setup/cni/) just sets up iptables redirection which forces all pod traffic through the sidecar proxy.
 :::
 
 ### CNI and Plugins
@@ -36,4 +36,4 @@ Istio assumes you already have a CNI plugin capable of configuring pod-to-pod ne
 
 The Istio CNI is totally optional, you can use all the cool features without it. If you do not deploy the Istio CNI what happens instead is that an [init container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) gets added to every pod which has [sidecar injection](https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/) enabled and the init container sets up iptables redirection.
 
-For some users however this is a problem because it means whoever or whaetver is putting pods into their cluster requires some highly [privileged capabilities](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). The CNI solves that problem for those users. Instead of giving cluster users the ability to create highly privilged pods, the cluster admins deploy the Istio CNI and give _it_ the necessary capabilities to set up iptables redirection. Now all their users have to do is create a pod with regular privileges and the Istio CNI handles the rest.
+For some users however this is a problem because it means whoever or whaetver is putting pods into their cluster [requires](https://istio.io/latest/docs/ops/deployment/application-requirements/#pod-requirements) some highly [privileged capabilities](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). The CNI solves that problem for those users. Instead of giving cluster users the ability to create highly privilged pods, the cluster admins deploy the Istio CNI and give _it_ the necessary capabilities to set up iptables redirection. Now all their users have to do is create a pod with regular privileges and the Istio CNI handles the rest.
