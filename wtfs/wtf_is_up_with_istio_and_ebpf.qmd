@@ -7,8 +7,12 @@ title: WTF is up with Istio and eBPF?
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}
-**tl;dr** - **Nothing**. Not a damned thing.
+**tl;dr** - Not a damn thing.
 :::
+
+### Istio does not use eBPF
+
+For anything at all.
 
 ### Why _would_ Istio use eBPF?
 
@@ -24,8 +28,7 @@ Istio uses iptables to transparently redirect traffic from an application contai
 :::
 
 ::: {style="text-align: center"}
-
-These images are from [the Merbridge docs](https://merbridge.io/docs/overview/), which are based on [these slides](https://www.slideshare.net/slideshow/accelerating-envoy-and-istio-with-cilium-and-the-linux-kernel/) from Isovalent CTO Thomas Graf's [2018 Kubecon talk](https://youtu.be/ER9eIXL2_14?t=745) "Accelerating Envoy with the Linux Kernel".
+> Above images are from [the Merbridge docs](https://merbridge.io/docs/overview/), which are based on [these slides](https://www.slideshare.net/slideshow/accelerating-envoy-and-istio-with-cilium-and-the-linux-kernel/) from Thomas Graf's [2018 Kubecon talk](https://youtu.be/ER9eIXL2_14?t=745) "Accelerating Envoy with the Linux Kernel".
 
 :::
 
@@ -39,19 +42,34 @@ You mean that 2023 blog post that describes in detail how Istio's shiny new [amb
 
 :::
 
-Surprise! [That's bullshit now](https://istio.io/latest/blog/2024/inpod-traffic-redirection-ambient/). It turned out to be very difficult to build this feature in a way that is compatible with every possible CNI plugin out there so the approach was abandoned.
+Surprise! [Istio isn't doing that anymore](https://istio.io/latest/blog/2024/inpod-traffic-redirection-ambient/). It turned out to be very difficult to build this feature in a way that is compatible with every possible CNI plugin out there so the approach was abandoned.
 
-### What about ... _the incident?_
+### What about _the incident?_
 
-You mean that time that experimenting with eBPF led to a minor dustup with the CNCF over licensing? Yeah that did happen but it turned out to be no big deal and actually ended up improving things with the use of eBPF in CNCF projects.
+You mean that thing where the ambient mode eBPF experiment led to a minor dustup with the CNCF over licensing? Well, let me tell you the tale.
 
-The issue occured due to the GPL's absence from the CNCF's [list of approved software licenses](https://github.com/cncf/foundation/blob/main/allowed-third-party-license-policy.md#approved-licenses-for-allowlist) and the [eBPF reference implementation's](https://docs.kernel.org/bpf/bpf_licensing.html) presence in the Linux kernel which is of course [GPL-2.0](https://www.kernel.org/doc/html/latest/process/license-rules.html) licensed. The upshot if this situation was that there was some uncertainty if projects leveraging eBPF would be accepted into the CNCF.
+For backstory, you need to know:
 
-Oct 26 2022 Cilium applies for Graduation https://github.com/cncf/toc/pull/952 live at kubecon https://youtu.be/WxZr35Eyqxk?t=1963
-Dec  5 2022 Kong wants to donate blixt to CNCF https://github.com/kubernetes/org/issues/3875
-Dec  6 2022 MrBobbyTables asks for clarification https://github.com/cncf/foundation/issues/474
-Mar  6 2023 MrBobbyTables points out the GPL conflict https://github.com/kubernetes/org/issues/3875#issuecomment-1456514371
-Feb  1 2023 Istio applies for Graduation https://github.com/cncf/toc/pull/1000
+ * The CNCF has a [list of approved software licenses](https://github.com/cncf/foundation/blob/main/allowed-third-party-license-policy.md#approved-licenses-for-allowlist) that CNCF projects can use.
+ * The GPL is not on that list.
+ * Like [everything else in the Kernel](https://www.kernel.org/doc/html/latest/process/license-rules.html) the [eBPF reference implementation](https://docs.kernel.org/bpf/bpf_licensing.html) is GPL2.0.
 
-Licensing post https://ebpf.io/blog/ebpf-licensing-guide/
-Licensing talk https://www.youtube.com/watch?v=cxyDEdzNdH8
+In the fall of 2022 at Kubecon in Detroit, the CTO of Isolavent (the company behind Cilium) [opened a PR live on stage]( https://youtu.be/WxZr35Eyqxk?t=1963) against the [CNCF technical oversight committee github repo](https://github.com/cncf/toc/pull/952) propsing the Cilium project be moved to Graduated status. I happened to be in the room that day, it was a very fun moment. It takes time for a proposal like that to proceed, and while the process was underway something else happened.
+
+The folks at Kong [offered to donate](https://github.com/kubernetes/org/issues/3875) their experimental eBPF powered load balancer project called [blixt](https://github.com/kubernetes-sigs/blixt) to the CNCF as a sandbox project. During that discussion, well known destroyer of databases and CNCF man about town MrBobbyTables [pointed out](https://github.com/kubernetes/org/issues/3875#issuecomment-1343185774) that the submission was being held until such time as the CNCF could [decide what to do](https://github.com/cncf/foundation/issues/474) about the eBPF bits of the blixt project being licensed under the GPL.
+
+This (I presume since I wasn't involved at all) led to several months of hand-wringing and lawyer-consulting while the projects in question waited in limbo to find out their fate.
+
+#### What does _any_ of that have to do with Istio?
+
+Good question! In the middle of all this [Istio also applied for CNCF graduation](https://github.com/cncf/toc/pull/1000) and looked like they were going to breeze right through the process until someone [quite rightfully pointed out](https://github.com/cncf/toc/pull/1000#issuecomment-1564254089) that if Cilium couldn't graduate because it was using eBPF then it didn't seem at all fair to let Istio go ahead now did it?
+
+Since Istio wasn't doing much with eBPF anyway it was [easy to rip out the offending code](https://github.com/istio/istio/pull/45162) and get on with life. But it wasn't so straightforward for blixt and Cilium which are built on eBPF from the ground up. 
+
+If you want a detailed explanation of the subtleties of eBPF licensing you can read [this brief summary](https://docs.google.com/document/d/10CY8V1w8aQ6CrJ_US_Gnz8cx2SoOtOBqpUKX4cWl_4w/view) or [this detailed explanation](https://ebpf.io/blog/ebpf-licensing-guide/) or [watch this talk](https://www.youtube.com/watch?v=cxyDEdzNdH8), but if you just want to know how the story ends the CNCF [resolved to adopt a blanket licensing exception](https://www.cncf.io/wp-content/uploads/2024/07/CNCF-Governing-Board-Approved-Resolution-August-31-2023.pdf) for in kernel eBPF programs and [documented it for posterity](https://github.com/cncf/foundation/blob/main/license-exceptions/README.md#gpl-exceptions-for-in-kernel-ebpf-programs).
+
+The blixt project was successfully donated to the CNCF, both the Cilium and Istio projects quite deservedly made their way to graduated status, and they all lived happily ever after!
+
+::: {style="font-size: 500%; text-align: center"}
+🌇
+:::
