@@ -1,3 +1,0 @@
----
-title: It worked without Istio WTF is up with that?
----
