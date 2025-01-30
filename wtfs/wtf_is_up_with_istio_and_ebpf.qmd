@@ -58,7 +58,7 @@ In the fall of 2022 at Kubecon in Detroit, the CTO of Isolavent (the company beh
 
 The folks at Kong [offered to donate](https://github.com/kubernetes/org/issues/3875) their experimental eBPF powered load balancer project called [blixt](https://github.com/kubernetes-sigs/blixt) to the CNCF as a sandbox project. During that discussion, well known destroyer of databases and CNCF man about town MrBobbyTables [pointed out](https://github.com/kubernetes/org/issues/3875#issuecomment-1343185774) that the submission was being held until such time as the CNCF could [decide what to do](https://github.com/cncf/foundation/issues/474) about the eBPF bits of the blixt project being licensed under the GPL.
 
-This (I presume since I wasn't involved at all) led to several months of hand-wringing and lawyer-consulting while the projects in question waited in limbo to find out their fate.
+This (I presume since I wasn't involved at all) led to several months of [hand-wringing and lawyer-consulting](https://github.com/cncf/foundation/issues/226#issuecomment-1565040476) while the projects in question waited in limbo to find out their fate.
 
 #### What does _any_ of that have to do with Istio?
 
