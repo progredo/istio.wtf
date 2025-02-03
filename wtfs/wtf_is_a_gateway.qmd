@@ -1,0 +1,9 @@
+---
+title: WTF is a "gateway"?
+description: "&nbsp;"
+---
+
+::: {style="text-align: center"}
+[![subheading](media/filename.png "alt text"){width=80%}](http://source.com/)
+:::
+
