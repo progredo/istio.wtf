@@ -1,5 +1,6 @@
 ---
 title: WTF is up with Istio and eBPF?
+description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
