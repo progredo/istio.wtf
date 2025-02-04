@@ -7,3 +7,6 @@ description: "&nbsp;"
 [![subheading in lower case](media/filename.png "Alt text in complete sentences."){width=80%}](http://source.com/)
 :::
 
+::: {.callout-tip appearance="simple" icon=false}
+**tl;dr** - one sentence explanation ...
+:::
