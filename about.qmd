@@ -1,5 +1,12 @@
 ---
 title: "About"
+title-block-style: none
 ---
 
-About this site
+### WTF is this?
+
+This is a collection of explanations for things that have been known to confuse newcomers to the Istio project.
+
+### WTF should I do if my question isn't answered here?
+
+Check out [this lightning talk](https://colocatedeventseu2025.sched.com/event/1u5iB/cl-lightning-talk-how-to-get-istio-help-rob-salmond-superorbital) from Istio Day 2025 for a quick summary of how to get help.
