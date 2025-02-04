@@ -1,8 +1,76 @@
 ---
-title: Why TF did my EnvoyFilter break after upgrading Istio?
+title: Why TF did my `EnvoyFilter` break after upgrading Istio?
 description: "&nbsp;"
+format:
+  html:
+    code-block-bg: true
+    code-copy: true
 ---
 
 ::: {style="text-align: center"}
 [![not that kind of filter](media/envoy-coffee-filter.png "A kettle pours hot water into a pourover coffee maker with the envoy proxy logo on the side. The pourover rests atop a clear coffee cup sitting on a counter next to a bag of beans and a hand grinder."){width=80%}](https://unsplash.com/photos/dripping-liquid-in-cup-oAYlDfiZcJ0)
 :::
+
+::: {.callout-tip appearance="simple" icon=false}
+**tl;dr** - `EnvoyFilter` can make arbitrary changes to the Envoy configurations in sidecars and gateways, and the structure of those configurations can change from release to release.
+:::
+
+### Envoy Configuration
+
+At its core `istiod` consumes data from the K8s API (resources like `VirtalService`, `Service`, `Endpoint`) and turns them into Envoy configuration. Unlike nginx or haproxy, Envoy config was never intended to be written by hand. Long before [xDS](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/operations/dynamic_configuration) was introduced, ancient versions of Envoy docs provided a [small python app](https://github.com/envoyproxy/envoy/blob/v1.0.0/configs/configgen.py) to generate configs. From day one it has been understood that due to its flexibility Envoy configuration is necessarily complex, dynamic, and vast.
+
+---
+
+As an example here I'm fetching the Envoy config from a very small environment with sidecar injection disabled and it is > 200kb of JSON. By contrast, have you ever seen an `nginx.conf` file that was over 100kb?
+
+```default
+$ istioctl proxy-config all istio-ingressgateway-56558c9fd7-x24kb -ojson | wc -c
+222104
+```
+
+---
+
+Two key points:
+
+ * **Flexibility:** Envoy provides a stunning amount of functionality, of which Istio only utilizes a subset. Features (and their many associated config options) are added to Envoy at a faster rate than Istio adopts them.
+ * **Opinions:** Because Istio is an opinionated way to operate Envoy, the _structure_ of the configuration it produces is fairly consistent. A hand written envoy config file will look very different than one Istio produces.
+
+### The `EnvoyFilter` CRD
+
+`EnvoyFilter` is the "break glass" "I don't care what Istio told you" "I know what I'm doing, let me reach inside of Envoy and change things" CRD. It exists because users want to leverage the many Envoy features for which there is no first class Istio support. For example, there is no `RateLimit` CRD in Istio. If you want to [configure rate limiting](https://istio.io/latest/docs/tasks/policy-enforcement/rate-limit/) it's on you to reach inside Envoy and conjure the correct incantations. But given the size and complexity of the average Envoy config, this needs to be a precision undertaking.
+
+::: {.callout-tip}
+
+Check out [this fantastic Envoycon talk](https://www.youtube.com/watch?v=9tITEHHW-J4) to get an overview of the art of writing an `EnvoyFilter`.
+
+:::
+
+### Okay but _why_ did upgrading Istio break my thing?
+
+Think of `istiod` like a compiler, but instead of producing executables it produces Envoy configs. And think of an `EnvoyFilter` as a binary patch applied to the executable produced by our compiler.
+
+From one release of a compiler to the next, the authors might change all sorts of things about the way the resulting binary gets produced. Maybe they use new CPU instructions, maybe change the way memory gets allocated and organized, maybe they change the way resources like strings and images are stored inside the executable file. As long as the executable it produces functions the same way for the users, most people don't care how it works inside.
+
+BUT if you're out here patching binaries you sure do care, because if tomorrows shiny new compiler changes something your patch modifies then it's very likely you wind up with a broken binary.
+
+And it's the exact same thing with an `EnvoyFilter`.
+
+Today your `EnvoyFilter` might rely on the fact that Istio uses feature X instead of feature Y to get the job done, but tomorrow's Istio release might use something else and now you're back to square one figuring out how to patch it all over again.
+
+The [old istio docs](https://istio.io/v1.4/docs/reference/config/networking/envoy-filter/) used to call this out pretty overtly.
+
+> Since this is break glass configuration, there will not be any backward compatibility across different Istio releases. In other words, this configuration is subject to change based on internal implementation of Istio networking subsystem.
+
+The [current docs](https://istio.io/latest/docs/reference/config/networking/envoy-filter/) are a little less blunt.
+
+> ... any envoy configuration provided through this mechanism should be carefully monitored across Istio proxy version upgrades ...
+
+But core Istio maintainer John Howard called it out more directly in [this github comment](https://github.com/istio/istio/pull/43452) where he states:
+
+> EnvoyFilter is considered "highly alpha and not stable" and we discourage it ...
+
+And even more directly in his [fantastic blog post](https://blog.howardjohn.info/posts/opinionated-istio/#extensibility) about choosing Istio features:
+
+> ☠️ Avoid at all costs ☠️ EnvoyFilter is, objectively, the worst feature in Istio for stability ...
+
+Caveat emptor.
