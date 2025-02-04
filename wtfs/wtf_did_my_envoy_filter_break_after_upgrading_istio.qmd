@@ -1,8 +1,8 @@
 ---
-title: Why the fuck did my EnvoyFilter break after upgrading Istio?
+title: Why TF did my EnvoyFilter break after upgrading Istio?
 description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![Not that kind of filter.](media/envoy-coffee-filter.png "A kettle pours hot water into a pourover coffee maker which sits atop a clear coffee cup sitting on a counter next to a bag of beans and a hand grinder."){width=80%}](https://unsplash.com/photos/dripping-liquid-in-cup-oAYlDfiZcJ0)
+[![Not that kind of filter.](media/envoy-coffee-filter.png "A kettle pours hot water into a pourover coffee maker with the envoy proxy logo on the side. The pourover rests atop a clear coffee cup sitting on a counter next to a bag of beans and a hand grinder."){width=80%}](https://unsplash.com/photos/dripping-liquid-in-cup-oAYlDfiZcJ0)
 :::

@@ -11,8 +11,10 @@ description: "&nbsp;"
 **tl;dr** - "downstream" is where connections come from and "upstream" is where they go.
 :::
 
-Throughout the Istio docs you'll find the terms "upstream" and "downstream" used in a way which may be counterintuitive to you. This terminology has been imported wholesale from the Envoy project which [documents it well](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology#terminology) but does not explain _why_ the terms are used this way.
+### It's Not About Water
+
+Throughout the Istio docs you'll find the terms "upstream" and "downstream" used in a way which may be counterintuitive to you. This terminology has been imported wholesale from the Envoy project which [documents the terms clearly](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology#terminology) but does not explain _why_ the terms are used this way.
 
 The confusion often arises when using the [hydrological definition](https://en.wikipedia.org/wiki/Current_(hydrology)) instead of a technical one. Istio and Envoy use the terms in the same context of a [telecoms "upstream"](https://en.wikipedia.org/wiki/Upstream_(networking)) which refers to traffic moving from a subscriber to a provider, or a [source control "upstream"](https://www.atlassian.com/git/tutorials/git-forks-and-upstreams) which refers to where a patch should be sent while "downstream" is where the patch comes from.
 
-We can't lay the blame for this confusion squarely on Istio and Envoy however, nginx started using the term "upstream" this way [in 2003](https://github.com/nginx/nginx/commit/dc479b4d98d5b65b78689c5282a31c70efadd928)
+We can't lay the blame for this confusion squarely on Istio and Envoy however, nginx started using the term "upstream" this way [back in 2003](https://github.com/nginx/nginx/commit/dc479b4d98d5b65b78689c5282a31c70efadd928).
