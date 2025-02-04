@@ -9,6 +9,9 @@ website:
         text: Home
       - about.qmd
 
+  page-footer:
+    center: "Copyright 2024-2025, [Progredo Systems Inc.](https://progredo.ca)"
+
 format:
   html:
     theme: litera
