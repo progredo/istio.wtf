@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![Ketchup or Catsup?](media/ketchup-catsup.jpg "A screenshot from an episode of The Simpsons in which Mr. Burns is shopping for groceries and holds up two red condiment bottles; one labeled \"ketchup\" and the other labeled \"catsup\", but the bottels have the letters TLS and mTLS superimposed on them.")](https://imgflip.com/memegenerator/218629870/Simpsons---Ketchup--Catsup)
+[![ketchup or catsup?](media/ketchup-catsup.jpg "A screenshot from an episode of The Simpsons in which Mr. Burns is shopping for groceries and holds up two red condiment bottles; one labeled \"ketchup\" and the other labeled \"catsup\", but the bottels have the letters TLS and mTLS superimposed on them.")](https://imgflip.com/memegenerator/218629870/Simpsons---Ketchup--Catsup)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}

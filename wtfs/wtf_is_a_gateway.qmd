@@ -4,6 +4,6 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![subheading](media/filename.png "alt text"){width=80%}](http://source.com/)
+[![the only way out is through](media/gateway "A brick wall painted white dominates the image. A narrow cobblestone walkway is visible at the foot of the wall. On the right, a heavy black gate blocks the exit."){width=80%}](https://unsplash.com/photos/black-gate-panel-with-black-metal-gate-latch-jHcwBHPQjs8)
 :::
 

@@ -4,6 +4,6 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![subheading](media/coffee-filter-chain.png "alt text"){width=80%}](https://unsplash.com/photos/two-person-pouring-coffee-with-piled-cups-eksqjXTLpak)
+[![coffee at christopher nolan's place](media/coffee-filter-chain.png "Multiple pourover coffee makers are being held above one another while a kettle pours water into the top and it trickles down through all of them. The numbers 404 are superimposed on the scene, and the whole thing is rotated sideways so the water appears to be pouring from left to right."){width=80%}](https://unsplash.com/photos/two-person-pouring-coffee-with-piled-cups-eksqjXTLpak)
 :::
 
