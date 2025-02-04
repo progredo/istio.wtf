@@ -55,11 +55,11 @@ For backstory, you need to know:
  * The GPL is not on that list.
  * Like [everything else in the Kernel](https://www.kernel.org/doc/html/latest/process/license-rules.html) the [eBPF reference implementation](https://docs.kernel.org/bpf/bpf_licensing.html) is GPL2.0.
 
-In the fall of 2022 at Kubecon in Detroit, the CTO of Isolavent (the company behind Cilium) [opened a PR live on stage]( https://youtu.be/WxZr35Eyqxk?t=1963) against the [CNCF technical oversight committee github repo](https://github.com/cncf/toc/pull/952) propsing the Cilium project be moved to Graduated status. I happened to be in the room that day, it was a very fun moment. It takes time for a proposal like that to proceed, and while the process was underway something else happened.
+In the fall of 2022 at Kubecon in Detroit, the CTO of Isolavent (the company behind Cilium) [opened a PR live on stage]( https://youtu.be/WxZr35Eyqxk?t=1963) against the [CNCF technical oversight committee github repo](https://github.com/cncf/toc/pull/952) propsing the Cilium project be moved to Graduated status. It takes time for a proposal like that to proceed, and while the process was underway something else happened.
 
 The folks at Kong [offered to donate](https://github.com/kubernetes/org/issues/3875) their experimental eBPF powered load balancer project called [blixt](https://github.com/kubernetes-sigs/blixt) to the CNCF as a sandbox project. During that discussion, well known destroyer of databases and CNCF man about town MrBobbyTables [pointed out](https://github.com/kubernetes/org/issues/3875#issuecomment-1343185774) that the submission was being held until such time as the CNCF could [decide what to do](https://github.com/cncf/foundation/issues/474) about the eBPF bits of the blixt project being licensed under the GPL.
 
-This (I presume since I wasn't involved at all) led to several months of [hand-wringing and lawyer-consulting](https://github.com/cncf/foundation/issues/226#issuecomment-1565040476) while the projects in question waited in limbo to find out their fate.
+This presumably led to several months of [hand-wringing and lawyer-consulting](https://github.com/cncf/foundation/issues/226#issuecomment-1565040476) while the projects in question waited in limbo to find out their fate.
 
 #### What does _any_ of that have to do with Istio?
 
