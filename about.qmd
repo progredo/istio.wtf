@@ -7,6 +7,14 @@ title-block-style: none
 
 This is a collection of explanations for things that have been known to confuse newcomers to the Istio project.
 
+### Why TF does this exist?
+
+I offer training professionally and support the Istio community casually as time permits, and I wanted to have a detailed reference to link folks to when common questions come up.
+
+### WTF should I do if this site answered my question?
+
+Throw me a high five if you see me at Kubecon, share what you've learned with a colleague, and if you're in the market for some cloud training [keep me in mind](https://progredo.ca/).
+
 ### WTF should I do if my question isn't answered here?
 
 Check out [this lightning talk](https://colocatedeventseu2025.sched.com/event/1u5iB/cl-lightning-talk-how-to-get-istio-help-rob-salmond-superorbital) from Istio Day 2025 for a quick summary of how to get help.
