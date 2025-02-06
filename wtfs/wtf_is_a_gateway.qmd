@@ -4,6 +4,9 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![the only way out is through](media/gateway "A brick wall painted white dominates the image. A narrow cobblestone walkway is visible at the foot of the wall. On the right, a heavy black gate blocks the exit."){width=80%}](https://unsplash.com/photos/black-gate-panel-with-black-metal-gate-latch-jHcwBHPQjs8)
+[![The way out is through.](media/gateway "A brick wall painted white dominates the image. A narrow cobblestone walkway is visible at the foot of the wall. On the right, a heavy black gate blocks the exit."){width=80%}](https://unsplash.com/photos/black-gate-panel-with-black-metal-gate-latch-jHcwBHPQjs8)
 :::
 
+::: {.callout-tip appearance="simple" icon=false}
+**tl;dr** - It's an overloaded term that means a variety of things depending on context, but a radically oversimplified definition might be "It controls traffic entering and exiting the mesh".
+:::
