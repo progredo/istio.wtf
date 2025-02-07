@@ -14,9 +14,11 @@ website:
 
 format:
   html:
-    from: markdown-smart
-    theme: litera
-    css: styles.css
+    # direct pandoc options
     toc: true
+    from: markdown-smart
+    css: styles.css
+    # quarto options
+    theme: litera
     mainfont:  "Consolas, monospace"
     page-layout: full
