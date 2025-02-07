@@ -30,6 +30,8 @@ $ istioctl proxy-config all istio-ingressgateway-56558c9fd7-x24kb -ojson | wc -c
 
 ---
 
+TODO: - someting about the structure part
+
 Two key points:
 
  * **Flexibility:** Envoy provides a stunning amount of functionality, of which Istio only utilizes a subset. Features (and their many associated config options) are added to Envoy at a faster rate than Istio adopts them.
