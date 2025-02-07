@@ -3,8 +3,6 @@ title: WTF is up with these tables in the Istio docs?
 description: "&nbsp;"
 ---
 
-TODO: https://kubespec.dev/v1/Service
-
 ::: {style="text-align: center"}
 ![For real though what is this?](media/boxes.png "Numerous screenshots of tabular data from the Istio documentation are overlaid like shuffled papers on a black background with the word 'wat?' superimposed on them."){width=80%}
 :::
