@@ -1,7 +1,9 @@
 ---
-title: WTF is up with all these tables in the Istio docs?
+title: WTF is up with these tables in the Istio docs?
 description: "&nbsp;"
 ---
+
+TODO: https://kubespec.dev/v1/Service
 
 ::: {style="text-align: center"}
 ![For real though what is this?](media/boxes.png "Numerous screenshots of tabular data from the Istio documentation are overlaid like shuffled papers on a black background with the word 'wat?' superimposed on them."){width=80%}
@@ -10,3 +12,148 @@ description: "&nbsp;"
 ::: {.callout-tip appearance="simple" icon=false}
 **tl;dr** - it's complicated, keep reading.
 :::
+
+### RTFM
+
+The [configuration reference docs](https://istio.io/latest/docs/reference/config/) contain an exhaustive guide to every CRD, metric, analysis message, and Kubernetes annotation used by Istio. Many of these reference docs include a field-by-field breakdown of deeply nested data structures. The problem with trying to document a deeply nested data structure is that it doesn't lend itself to fitting in an average web page while retaining the innate _structure_.
+
+Istio isn't the only project trying to manage this problem, the K8s API reference suffers from it too. Take a look at [the Service resource reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#service-v1-core) for instance. It starts off by documenting the top level fields supported by a `Service` resource, but it doesn't try to recursively itemize every single option you could include under `Service.spec`. It just [refers you to the docs](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#servicespec-v1-core) for the `ServiceSpec` type which in turn itemizes all the available options it supports, and also in turn refers you to the docs for any of its own nested object types (eg. [Service.spec.ports is a ServicePort](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#serviceport-v1-core) object.
+
+You can see this play out in the output of `kubectl explain` as well. It will either show you a detailed explanation of the top level fields:
+
+```default
+$ kubectl explain service
+KIND:       Service
+VERSION:    v1
+
+DESCRIPTION:
+    Service is a named abstraction of software service (for example, mysql)
+    consisting of local port (for example 3306) that the proxy listens on, and
+    the selector that determines which pods will answer requests sent through
+    the proxy.
+
+FIELDS:
+  apiVersion	<string>
+    APIVersion defines the versioned schema of this representation of an object.
+    Servers should convert recognized schemas to the latest internal value, and
+    may reject unrecognized values. More info:
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+
+  kind	<string>
+    Kind is a string value representing the REST resource this object
+    represents. Servers may infer this from the endpoint the client submits
+    requests to. Cannot be updated. In CamelCase. More info:
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+  metadata	<ObjectMeta>
+    Standard object's metadata. More info:
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+
+  spec	<ServiceSpec>
+    Spec defines the behavior of a service.
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+  status	<ServiceStatus>
+    Most recently observed status of the service. Populated by the system.
+    Read-only. More info:
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+```
+
+Or it will give you a type-by-type breakdown of every single field supported at every single depth level the resource supports:
+
+```default
+$ kubectl explain service --recursive
+KIND:       Service
+VERSION:    v1
+
+DESCRIPTION:
+    Service is a named abstraction of software service (for example, mysql)
+    consisting of local port (for example 3306) that the proxy listens on, and
+    the selector that determines which pods will answer requests sent through
+    the proxy.
+    
+FIELDS:
+  apiVersion	<string>
+  kind	<string>
+  metadata	<ObjectMeta>
+    annotations	<map[string]string>
+    creationTimestamp	<string>
+    deletionGracePeriodSeconds	<integer>
+    deletionTimestamp	<string>
+    finalizers	<[]string>
+    generateName	<string>
+    generation	<integer>
+    labels	<map[string]string>
+    managedFields	<[]ManagedFieldsEntry>
+      apiVersion	<string>
+      fieldsType	<string>
+      fieldsV1	<FieldsV1>
+      manager	<string>
+      operation	<string>
+      subresource	<string>
+      time	<string>
+    name	<string>
+    namespace	<string>
+    ownerReferences	<[]OwnerReference>
+      apiVersion	<string> -required-
+      blockOwnerDeletion	<boolean>
+      controller	<boolean>
+      kind	<string> -required-
+      name	<string> -required-
+      uid	<string> -required-
+    resourceVersion	<string>
+    selfLink	<string>
+    uid	<string>
+  spec	<ServiceSpec>
+    allocateLoadBalancerNodePorts	<boolean>
+    clusterIP	<string>
+    clusterIPs	<[]string>
+    externalIPs	<[]string>
+    externalName	<string>
+    externalTrafficPolicy	<string>
+    healthCheckNodePort	<integer>
+    internalTrafficPolicy	<string>
+    ipFamilies	<[]string>
+    ipFamilyPolicy	<string>
+    loadBalancerClass	<string>
+    loadBalancerIP	<string>
+    loadBalancerSourceRanges	<[]string>
+    ports	<[]ServicePort>
+      appProtocol	<string>
+      name	<string>
+      nodePort	<integer>
+      port	<integer> -required-
+      protocol	<string>
+      targetPort	<IntOrString>
+    publishNotReadyAddresses	<boolean>
+    selector	<map[string]string>
+    sessionAffinity	<string>
+    sessionAffinityConfig	<SessionAffinityConfig>
+      clientIP	<ClientIPConfig>
+        timeoutSeconds	<integer>
+    type	<string>
+  status	<ServiceStatus>
+    conditions	<[]Condition>
+      lastTransitionTime	<string> -required-
+      message	<string> -required-
+      observedGeneration	<integer>
+      reason	<string> -required-
+      status	<string> -required-
+      type	<string> -required-
+    loadBalancer	<LoadBalancerStatus>
+      ingress	<[]LoadBalancerIngress>
+        hostname	<string>
+        ip	<string>
+        ports	<[]PortStatus>
+          error	<string>
+          port	<integer> -required-
+          protocol	<string> -required-
+```
+
+But it won't do both.
+
+[Kubespec.dev](https://kubespec.dev/) is a kickass project that attempts to reconcile both worlds by combining both structure and some reference docs in a single place.
+
+![kubespec.dev reference for a K8s Service resource](media/kubespec-service.png)
+
+#TODO: make this a figure^^
