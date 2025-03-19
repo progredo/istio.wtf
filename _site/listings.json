@@ -1,0 +1,16 @@
+[
+  {
+    "listing": "/index.html",
+    "items": [
+      "/wtfs/it_worked_before_its_broken_after.html",
+      "/wtfs/wtf_is_nr_filter_chain_not_found.html",
+      "/wtfs/wtf_is_upstream_and_downstream.html",
+      "/wtfs/wtf_is_a_gateway.html",
+      "/wtfs/wtf_is_the_istio_cni.html",
+      "/wtfs/wtf_is_the_difference_between_mTLS_and_TLS.html",
+      "/wtfs/wtf_is_up_with_istio_and_ebpf.html",
+      "/wtfs/wtf_is_up_with_the_tables_in_the_istio_docs.html",
+      "/wtfs/wtf_did_my_envoy_filter_break_after_upgrading_istio.html"
+    ]
+  }
+]
