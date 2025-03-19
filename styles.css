@@ -2,3 +2,7 @@
 p {
   font-family: Consolas, monospace;
 }
+
+.quarto-figure .figure-caption {
+  text-align: center;
+}

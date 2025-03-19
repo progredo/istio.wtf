@@ -11,13 +11,134 @@ description: "&nbsp;"
 **tl;dr** - it's complicated, keep reading.
 :::
 
+Or to put it another way: how am I supposed to know what fields and values should go where when I am crafting Istio custom resources?
+
 ### RTFM
 
-The [configuration reference docs](https://istio.io/latest/docs/reference/config/) contain an exhaustive guide to every CRD, metric, analysis message, and Kubernetes annotation used by Istio. Many of these reference docs include a field-by-field breakdown of deeply nested data structures. The problem with trying to document a deeply nested data structure is that it doesn't lend itself to fitting in an average web page while retaining the innate _structure_.
+The [configuration reference docs](https://istio.io/latest/docs/reference/config/) contain an exhaustive guide to every CRD, metric, analysis message, and Kubernetes annotation used by Istio. Many of these reference docs include a field-by-field breakdown of deeply nested data structures. The problem with trying to document a deeply nested data structure is that it doesn't lend itself to fitting in an average web page. So rather than trying to show the deeply nested relationship in a single structure, they document the top-level fields and then provide links from there down to each subsection.
 
-Istio isn't the only project trying to manage this problem, the K8s API reference suffers from it too. Take a look at [the Service resource reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#service-v1-core) for instance. It starts off by documenting the top level fields supported by a `Service` resource, but it doesn't try to recursively itemize every single option you could include under `Service.spec`. It just [refers you to the docs](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#servicespec-v1-core) for the `ServiceSpec` type which in turn itemizes all the available options it supports, and also in turn refers you to the docs for any of its own nested object types (eg. [Service.spec.ports is a ServicePort](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#serviceport-v1-core) object.
+Let's look at the reference for a [`ProxyConfig` resource](https://istio.io/latest/docs/reference/config/networking/proxy-config/).
 
-You can see this play out in the output of `kubectl explain` as well. It will either show you a detailed explanation of the top level fields:
+![ProxyConfig reference from Istio docs](media/istio-tables/proxyconfig-table.png "A screenshot of the ProxyConfig table found in the Istio reference docs."){#fig-proxyconfig-reference}
+
+The leftmost column of field names indicates which values will be accepted under the `spec` section of a `ProxyConfig` resource.
+
+::: {#fig-code0 fig-align="left"}
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: ProxyConfig
+metadata:
+  name: a-very-cool-config
+spec:
+  selector:
+  concurrency:
+  environmentVariables:
+  image:
+```
+
+Field names as outlined in the `ProxyConfig` docs table.
+:::
+
+---
+
+That leftmost column also includes the _types_ of each of the acceptable field names, but those _type names_ will never be accepted as _field names_.
+
+::: {#fig-code1 fig-align="left"}
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: ProxyConfig
+metadata:
+  name: this-would-NEVER-work
+spec:
+  WorkloadSelector:
+  Int32Value:
+  map<string, string>:
+  ProxyImage:
+```
+
+An example of what not to do, this will fail to apply.
+:::
+
+---
+
+The types indicate what is allowed to be _assigned to the corresponding field_.
+
+::: {#fig-code2 fig-align="left"}
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: ProxyConfig
+metadata:
+  name: a-very-cool-config
+spec:
+  selector: An object of type WorkloadSelector can go here.
+  concurrency: A 32 bit integer can go here.
+  environmentVariables: A map (associative array) of string->string can go here.
+  image: An object of type ProxyImage can go here.
+```
+
+Closer to correct. Fields on the left, types being assigned to fields on the right.
+:::
+
+---
+
+For simple values like an integer or an associative array we don't need to look farther to use these docs to craft a spec compliant resource.
+
+::: {#fig-code3 fig-align="left"}
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: ProxyConfig
+metadata:
+  name: a-very-cool-config
+spec:
+  concurrency: 2
+  environmentVariables:
+    EDITOR: vim
+    DEBUG: "1"
+```
+
+Simple value assignments.
+
+:::
+
+---
+
+For complex types like a `WorkloadSelector` object or a `ProxyImage` object we need to examine the corresponding tables to work out the correct field names and value types to use. 
+
+
+::: {style="text-align: center"}
+![Clicking these type links navigates to the reference table for that type.](media/istio-tables/proxyconfig-table-highlighted.jpg "The same screenshot of the ProxyConfig table shown above, but with the links to object type references highlighted."){#fig-proxyconfig-reference-highlighted}
+:::
+
+
+![Reference table for `WorkloadSelector`.](media/istio-tables/workload-selector-table.jpg "A screenshot of the WorkloadSelector reference table from the Istio docs."){#fig-workloadselector-reference}
+
+![Reference table for `ProxyImage`.](media/istio-tables/proxy-image-table.jpg "A screenshot of the ProxyImage reference table from the Istio docs."){#fig-proxyimage-reference}
+
+These two subsequent reference tables now provide enough information to craft the next sections of our `ProxyConfig` object, adding the values for `selector` and `image` as described in each of those tables.
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: ProxyConfig
+metadata:
+  name: a-very-cool-config
+spec:
+  concurrency: 2
+  environmentVariables:
+    EDITOR: vim
+    DEBUG: "1"
+  selector:
+    app.kubernetes.io/name: httpbin
+  image:
+    imageType: distroless
+```
+
+## See Also
+
+#### Kubernetes
+
+Istio isn't the only project trying to manage this problem, the K8s API reference suffers from it too. Take a look at the [API reference for a Service](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#service-v1-core) for instance. It starts off by documenting the top level fields supported by a `Service` resource, but it doesn't try to recursively itemize every single option you could include under the `spec`. Instead it [refers you to the section](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#servicespec-v1-core) for the `ServiceSpec` type which lists all the available fields it supports, and goes on to refer you to the relevant subsection for any of its own nested object types (eg. [Service.spec.ports is a ServicePort](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#serviceport-v1-core) object.
+
+You can see this play out in the output of `kubectl explain` as well. It will either show you a detailed explanation of the avialeble fields:
 
 ```default
 $ kubectl explain service
@@ -57,7 +178,7 @@ FIELDS:
     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 ```
 
-Or it will give you a type-by-type breakdown of every single field supported at every single depth level the resource supports:
+Or it will recursively give you a type-by-type breakdown of every single field supported at every depth level:
 
 ```default
 $ kubectl explain service --recursive
@@ -150,8 +271,8 @@ FIELDS:
 
 But it won't do both.
 
+#### Kubespec
+
 [Kubespec.dev](https://kubespec.dev/) is a kickass project that attempts to reconcile both worlds by combining both structure and some reference docs in a single place.
 
-![kubespec.dev reference for a K8s Service resource](media/kubespec-service.png)
-
-#TODO: make this a figure^^
+![kubespec.dev reference for a K8s Service resource](media/kubespec-service.png){#fig-kubespec-dot-dev}
