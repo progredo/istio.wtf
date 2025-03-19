@@ -166,18 +166,18 @@ ul.task-list li input[type="checkbox"] {
 <div id="fix-datapath" class="quarto-layout-panel" style="text-align: center">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-iptables" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="media/istio-ebpf/merbridge_iptables_path.png" title="A diagram showing the path of data leaving a primary container, winding it's way up and down the Linux TCP/IP stack, before finally arriving at the Envoy sidecar." class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">data path using iptables</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;2: Data path using iptables.</figcaption>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-ebpf" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="media/istio-ebpf/merbridge_eBPF_path.png" title="A diagram show the path of data leaving a primary container and being immediately picked up by an eBPF program in the kernel and rerouted directly to an Envoy sidecar, bypassing much of the network stack." class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">data path using eBPF</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;3: Data path using eBPF.</figcaption>
 </figure>
 </div>
 </div>
@@ -193,10 +193,10 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="what-about-this-blog-post">What about <a href="https://istio.io/latest/blog/2023/ambient-ebpf-redirection/">this blog post</a>?</h3>
 <p>You mean that 2023 blog post that describes in detail how Istio's shiny new <a href="https://istio.io/latest/docs/ambient/overview/">ambient mode</a> leverages eBPF and shows off some sweet performance gains?</p>
 <div style="text-align: center">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-maxqps" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="media/istio-ebpf/MaxQPS.png" title="A bar chart showing an appreciable boost to the number of queries per second Istio can process when using eBPF for traffic redirection." class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">QPS when you drink eBPF protein shakes</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;4: QPS when you drink eBPF protein shakes.</figcaption>
 </figure>
 </div>
 </div>
