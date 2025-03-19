@@ -4,9 +4,33 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![The way out is through.](media/gateway "A brick wall painted white dominates the image. A narrow cobblestone walkway is visible at the foot of the wall. On the right, a heavy black gate blocks the exit."){width=80%}](https://unsplash.com/photos/black-gate-panel-with-black-metal-gate-latch-jHcwBHPQjs8)
+[![The way out is through.](media/gateway "A brick wall painted white dominates the image. A narrow cobblestone walkway is visible at the foot of the wall. On the right, a heavy black gate blocks the exit."){width=80% #fig-gateway}](https://unsplash.com/photos/black-gate-panel-with-black-metal-gate-latch-jHcwBHPQjs8)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}
-**tl;dr** - It's an overloaded term that means a variety of things depending on context, but a radically oversimplified definition might be "It controls traffic entering and exiting the mesh".
+**tl;dr** - It's an overloaded term that means a variety of things depending on context, but a radically oversimplified definition might be "It controls traffic entering and exiting the cluster".
 :::
+
+### Prior Art
+
+You can watch my first attempt to address the confusion around this term in [this 2022 Istiocon talk](https://www.youtube.com/watch?v=HSXujcVk0N8). I stand by my original assesment: naming things isn't hard, it's impossible.
+
+### It's a kind of deployment
+
+#### North/South gateways
+
+The first gateway most Istio users encounter is a type of deployment called an [Ingress Gateway](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/). It's a deployment of the exact same `istio-proxy` container image that's used for sidecars, except without all the iptables redirection. It just sits at the edge of your cluster and allows traffic to enter from the outside (usually through a load balancer) and turns that plain old vanilla traffic into "meshed" traffic (eg. wraps it in mTLS and so on).
+
+Istio also offers something called an [Egress Gateway](https://istio.io/latest/docs/tasks/traffic-management/egress/egress-gateway/) which is also just a deployment of `istio-proxy` containers sitting at the edge of the cluster, but this time configured as a central point which traffic leaving the mesh must pass through on the way out. This allows users to do things like enforce policy and collect metrics on outbound traffic.
+
+#### East/West gateways
+
+When deploying an Istio mesh across multiple clusters in the [multiple networks model](https://istio.io/latest/docs/ops/deployment/deployment-models/#multiple-networks) pods in one cluster will be unable to talk directly to pods in another cluster without something to relay those connections for them. That something is an East/West gateway. Similar to North/South it's just another deployment in your cluster, but this time it's managing cross-cluster traffic not inbound/outbound traffic.
+
+### It's an Istio custom resource
+
+Istio gateway deployments, be they North/South or East/West can't just start routing traffic on their own. They need configuration to tell them what to do with the traffic they receive. That configuration can be provided in the form of an [Istio `Gateway` resource](https://istio.io/latest/docs/reference/config/networking/gateway/). That is, a custom resource that you apply to your cluster which `istiod` will read from the K8s API and translate into a corresponding Envoy configuration which it will beam down to a gateway deployment, providing it the configuration it needs to do its job.
+
+### It's a Gateway API custom resource
+
+It did not take long for folks who were using the [old Ingress resource](https://kubernetes.io/docs/concepts/services-networking/ingress/) to run up against limitations. It [can't handle TCP](https://github.com/kubernetes/kubernetes/issues/23291) or [do traffic splitting](https://github.com/kubernetes/kubernetes/issues/25485) or handle [complex routing rules](https://github.com/kubernetes/kubernetes/issues/28443). Rather than try to fix Ingress [SIG-Network](https://github.com/kubernetes/community/blob/master/sig-network/charter.md) developed a new API called [Gateway API](https://gateway-api.sigs.k8s.io/) to address its shortcomings. The Gateway API offers a bunch of new resource types including (you guessed it) a [`Gateway` resource](https://gateway-api.sigs.k8s.io/api-types/gateway/) which behaves similarly to the Istio custom resource of the same name.
