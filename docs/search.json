@@ -49,6 +49,13 @@
     "text": "WTF is NR filter chain not found?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is \"upstream\" and \"downstream\"?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is a \"gateway\"?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is the Istio CNI?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is the difference between mTLS and TLS?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is up with Istio and eBPF?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWTF is up with these tables in the Istio docs?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhy TF did my EnvoyFilter break after upgrading Istio?\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
+    "objectID": "readme.html",
+    "href": "readme.html",
+    "title": "istio.wtf",
+    "section": "",
+    "text": "istio.wtf\n\nWith all due respect to my man Christian Posta, Istio is complex.\nIf you spend enough time introducing people to Istio, you start to hear the same questions getting raised. This is my attempt to get out in front of some of the most common Istio questions that confuse newcomers to the Istio project."
+  },
+  {
     "objectID": "wtfs/wtf_is_the_difference_between_mTLS_and_TLS.html",
     "href": "wtfs/wtf_is_the_difference_between_mTLS_and_TLS.html",
     "title": "WTF is the difference between mTLS and TLS?",
@@ -82,12 +89,5 @@
     "title": "WTF is the Istio CNI?",
     "section": "",
     "text": "Figure 1: Container with a network interface.\n\n\n\n\n\n\n\n\n\ntl;dr - Istio is not a typical CNI plugin, the Istio CNI just sets up iptables redirection which forces all pod traffic through the sidecar proxy.\n\n\n\n\nCNI and Plugins\nThe Container Network Interface is the standard by which a container runtime (like Docker or containerd) gives users control over how their containers get connected. A CNI plugin is any application which implements the CNI standard.\nThe workflow goes something like:\n\nSomething asks the runtime to launch a container.\nOnce the container starts, the runtime passes some information like the name of the network interface assigned to the container to the CNI plugin.\nThe CNI plugin executes and returns control to the container runtime.\n\nHere's the important part: usually when the CNI plugin executes it is setting up network connectivity for the container, but not always.\nThe container runtime doesn't actually care if the plugin connected the container to the internet or anything else for that matter, it just cares that the plugin does not return an error. A CNI plugin could just echo \"lol k8s sux\" &gt; /etc/motd for all the container runtime cares.\n\n\nThe Istio CNI\nWhile the Istio CNI does implement the interface making it a valid CNI plugin it does not configure pod-to-pod networking the way other CNI plugins like Calico and Cilium do. All it does is add some iptables rules which force all the traffic going in or out of the main container in the pod to be redirected through the istio-proxy sidecar container which is where all the fancy service mesh stuff happens.\nIstio assumes you already have a CNI plugin capable of configuring pod-to-pod networking and it just steps in after that plugin is finished to add the little bits that Istio needs in order to function.\n\n\nBut Why?\n\n\n\n\n\nThe Istio CNI is totally optional, you can use all the cool features without it. If you do not deploy the Istio CNI what happens instead is that an init container gets added to every pod which has sidecar injection enabled and the init container sets up iptables redirection.\nFor some users however this is a problem because it means whoever or whaetver is putting pods into their cluster requires some highly privileged capabilities. The CNI solves that problem for those users. Instead of giving cluster users the ability to create highly privilged pods, the cluster admins deploy the Istio CNI and give it the necessary capabilities to set up iptables redirection. Now all their users have to do is create a pod with regular privileges and the Istio CNI handles the rest."
-  },
-  {
-    "objectID": "readme.html",
-    "href": "readme.html",
-    "title": "istio.wtf",
-    "section": "",
-    "text": "istio.wtf\n\nWith all due respect to my man Christian Posta, Istio is complex.\nIf you spend enough time introducing people to Istio, you start to hear the same questions getting raised. This is my attempt to get out in front of some of the most common Istio questions that confuse newcomers to the Istio project."
   }
 ]
