@@ -22,9 +22,9 @@ Istio uses iptables to transparently redirect traffic from an application contai
 
 ::: {#fix-datapath layout-ncol=2 style="text-align: center"}
 
-![data path using iptables](media/istio-ebpf/merbridge_iptables_path.png "A diagram showing the path of data leaving a primary container, winding it's way up and down the Linux TCP/IP stack, before finally arriving at the Envoy sidecar.")
+![Data path using iptables.](media/istio-ebpf/merbridge_iptables_path.png "A diagram showing the path of data leaving a primary container, winding it's way up and down the Linux TCP/IP stack, before finally arriving at the Envoy sidecar."){#fig-iptables}
 
-![data path using eBPF](media/istio-ebpf/merbridge_eBPF_path.png "A diagram show the path of data leaving a primary container and being immediately picked up by an eBPF program in the kernel and rerouted directly to an Envoy sidecar, bypassing much of the network stack.")
+![Data path using eBPF.](media/istio-ebpf/merbridge_eBPF_path.png "A diagram show the path of data leaving a primary container and being immediately picked up by an eBPF program in the kernel and rerouted directly to an Envoy sidecar, bypassing much of the network stack."){#fig-ebpf}
 
 :::
 
@@ -39,7 +39,7 @@ You mean that 2023 blog post that describes in detail how Istio's shiny new [amb
 
 ::: {style="text-align: center"}
 
-![QPS when you drink eBPF protein shakes](media/istio-ebpf/MaxQPS.png "A bar chart showing an appreciable boost to the number of queries per second Istio can process when using eBPF for traffic redirection."){width=80%}
+![QPS when you drink eBPF protein shakes.](media/istio-ebpf/MaxQPS.png "A bar chart showing an appreciable boost to the number of queries per second Istio can process when using eBPF for traffic redirection."){width=80% #fig-maxqps}
 
 :::
 

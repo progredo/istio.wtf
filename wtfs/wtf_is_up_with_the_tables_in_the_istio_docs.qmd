@@ -116,6 +116,7 @@ For complex types like a `WorkloadSelector` object or a `ProxyImage` object we n
 
 These two subsequent reference tables now provide enough information to craft the next sections of our `ProxyConfig` object, adding the values for `selector` and `image` as described in each of those tables.
 
+::: {#fig-code4 fig-align="left"}
 ```yaml
 apiVersion: networking.istio.io/v1beta1
 kind: ProxyConfig
@@ -132,6 +133,10 @@ spec:
     imageType: distroless
 ```
 
+The final product.
+
+:::
+
 ## See Also
 
 #### Kubernetes
@@ -140,6 +145,7 @@ Istio isn't the only project trying to manage this problem, the K8s API referenc
 
 You can see this play out in the output of `kubectl explain` as well. It will either show you a detailed explanation of the avialeble fields:
 
+::: {#fig-code5 fig-align="left"}
 ```default
 $ kubectl explain service
 KIND:       Service
@@ -178,8 +184,13 @@ FIELDS:
     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 ```
 
+`kubectl`'s built in `explain` subcommand also documents complex data types.
+
+:::
+
 Or it will recursively give you a type-by-type breakdown of every single field supported at every depth level:
 
+::: {#fig-code6 fig-align="left"}
 ```default
 $ kubectl explain service --recursive
 KIND:       Service
@@ -269,7 +280,11 @@ FIELDS:
           protocol	<string> -required-
 ```
 
-But it won't do both.
+It will also show you the nestend structure of the entire data type.
+
+:::
+
+But it won't do both at once.
 
 #### Kubespec
 

@@ -285,6 +285,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>These two subsequent reference tables now provide enough information to craft the next sections of our <code>ProxyConfig</code> object, adding the values for <code>selector</code> and <code>image</code> as described in each of those tables.</p>
+<div id="fig-code4" class="quarto-figure quarto-figure-left anchored">
+<figure class="figure">
 <div class="sourceCode" id="cb5"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> networking.istio.io/v1beta1</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> ProxyConfig</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
@@ -298,6 +300,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">app.kubernetes.io/name</span><span class="kw">:</span><span class="at"> httpbin</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">image</span><span class="kw">:</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">imageType</span><span class="kw">:</span><span class="at"> distroless</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<figcaption class="figure-caption">Figure&nbsp;10: The final product.</figcaption>
+</figure>
+</div>
 </section>
 <section id="see-also" class="level2">
 <h2 class="anchored" data-anchor-id="see-also">See Also</h2>
@@ -305,6 +310,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 class="anchored" data-anchor-id="kubernetes">Kubernetes</h4>
 <p>Istio isn't the only project trying to manage this problem, the K8s API reference suffers from it too. Take a look at the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#service-v1-core">API reference for a Service</a> for instance. It starts off by documenting the top level fields supported by a <code>Service</code> resource, but it doesn't try to recursively itemize every single option you could include under the <code>spec</code>. Instead it <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#servicespec-v1-core">refers you to the section</a> for the <code>ServiceSpec</code> type which lists all the available fields it supports, and goes on to refer you to the relevant subsection for any of its own nested object types (eg. <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#serviceport-v1-core">Service.spec.ports is a ServicePort</a> object.</p>
 <p>You can see this play out in the output of <code>kubectl explain</code> as well. It will either show you a detailed explanation of the avialeble fields:</p>
+<div id="fig-code5" class="quarto-figure quarto-figure-left anchored">
+<figure class="figure">
 <div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$ kubectl explain service</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>KIND:       Service</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>VERSION:    v1</span>
@@ -340,7 +347,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    Most recently observed status of the service. Populated by the system.</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    Read-only. More info:</span>
 <span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<figcaption class="figure-caption">Figure&nbsp;11: <code>kubectl</code>'s built in <code>explain</code> subcommand also documents complex data types.</figcaption>
+</figure>
+</div>
 <p>Or it will recursively give you a type-by-type breakdown of every single field supported at every depth level:</p>
+<div id="fig-code6" class="quarto-figure quarto-figure-left anchored">
+<figure class="figure">
 <div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$ kubectl explain service --recursive</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>KIND:       Service</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>VERSION:    v1</span>
@@ -427,7 +439,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>          error &lt;string&gt;</span>
 <span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>          port  &lt;integer&gt; -required-</span>
 <span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>          protocol  &lt;string&gt; -required-</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>But it won't do both.</p>
+<figcaption class="figure-caption">Figure&nbsp;12: It will also show you the nestend structure of the entire data type.</figcaption>
+</figure>
+</div>
+<p>But it won't do both at once.</p>
 </section>
 <section id="kubespec" class="level4">
 <h4 class="anchored" data-anchor-id="kubespec">Kubespec</h4>
@@ -435,7 +450,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-kubespec-dot-dev" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="media/kubespec-service.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;10: kubespec.dev reference for a K8s Service resource</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;13: kubespec.dev reference for a K8s Service resource</figcaption>
 </figure>
 </div>
 
