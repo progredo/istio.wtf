@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-![For real though what is this?](media/boxes.png "Numerous screenshots of tabular data from the Istio documentation are overlaid like shuffled papers on a black background with the word 'wat?' superimposed on them."){width=80%}
+![For real though what is this?](media/boxes.png "Numerous screenshots of tabular data from the Istio documentation are overlaid like shuffled papers on a black background with the word 'wat?' superimposed on them."){width=80% #fig-tables}
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}

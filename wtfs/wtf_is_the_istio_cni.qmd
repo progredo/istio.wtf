@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![container network interface](media/container-network-interface.png "A cardboard takeout box with an ethernet jack on the side."){width=80%}](https://unsplash.com/photos/small-brown-cardboard-box-with-handle-5R5Trsu1aIM)
+[![Container network interface.](media/container-network-interface.png "A cardboard takeout box with an ethernet jack on the side."){width=80% #fig-cni}](https://unsplash.com/photos/small-brown-cardboard-box-with-handle-5R5Trsu1aIM)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}

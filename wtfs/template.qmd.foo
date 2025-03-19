@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![subheading in lower case](media/filename.png "Alt text in complete sentences."){width=80%}](http://source.com/)
+[![Subheading.](media/filename.png "Alt text in complete sentences."){width=80% #fig-header}](http://source.com/)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}

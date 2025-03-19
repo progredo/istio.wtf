@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![a service mesh and a programmable kernel walk into a bar ...](media/istio-ebpf/istio-and-ebpf.png "eBPF honey bee logo plus istio sailboat logo equals question mark."){width=80%}](http://source.com/)
+[![A service mesh and a programmable kernel walk into a bar.](media/istio-ebpf/istio-and-ebpf.png "eBPF honey bee logo plus istio sailboat logo equals question mark."){width=80% #fig-ebpf}](http://source.com/)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}

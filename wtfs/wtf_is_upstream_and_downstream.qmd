@@ -4,7 +4,7 @@ description: "&nbsp;"
 ---
 
 ::: {style="text-align: center"}
-[![these terms have nothing to do with water](media/river.png "A wild river surrounded by trees with mountains in the distance and the word NOPE written over top of it in large block letters."){width=80%}](https://pixabay.com/photos/river-rocks-trees-conifer-stones-5765785/)
+[![These terms have _nothing_ to do with water.](media/river.png "A wild river surrounded by trees with mountains in the distance and the word NOPE written over top of it in large block letters."){width=80% #fig-river}](https://pixabay.com/photos/river-rocks-trees-conifer-stones-5765785/)
 :::
 
 ::: {.callout-tip appearance="simple" icon=false}
