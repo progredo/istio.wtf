@@ -21,7 +21,7 @@ At its core `istiod` consumes data from the K8s API (resources like `VirtalServi
 
 ---
 
-As an example here I'm fetching the Envoy config from a very small environment with sidecar injection disabled and it is > 200kb of JSON. By contrast, have you ever seen an `nginx.conf` file that was over 100kb?
+As an example here I'm fetching the Envoy config from a very small environment with sidecar injection disabled and it is > 200kb of JSON. By contrast, have you ever seen an `nginx.conf` file that was over 15kb?
 
 ```default
 $ istioctl proxy-config all istio-ingressgateway-56558c9fd7-x24kb -ojson | wc -c
@@ -29,8 +29,6 @@ $ istioctl proxy-config all istio-ingressgateway-56558c9fd7-x24kb -ojson | wc -c
 ```
 
 ---
-
-TODO: - someting about the structure part
 
 Two key points:
 

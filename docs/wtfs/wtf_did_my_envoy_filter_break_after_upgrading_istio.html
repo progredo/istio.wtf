@@ -193,11 +193,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="envoy-configuration">Envoy Configuration</h3>
 <p>At its core <code>istiod</code> consumes data from the K8s API (resources like <code>VirtalService</code>, <code>Service</code>, <code>Endpoint</code>) and turns them into Envoy configuration. Unlike nginx or haproxy, Envoy config was never intended to be written by hand. Long before <a href="https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/operations/dynamic_configuration">xDS</a> was introduced, ancient versions of Envoy docs provided a <a href="https://github.com/envoyproxy/envoy/blob/v1.0.0/configs/configgen.py">small python app</a> to generate configs. From day one it has been understood that due to its flexibility Envoy configuration is necessarily complex, dynamic, and vast.</p>
 <hr>
-<p>As an example here I'm fetching the Envoy config from a very small environment with sidecar injection disabled and it is &gt; 200kb of JSON. By contrast, have you ever seen an <code>nginx.conf</code> file that was over 100kb?</p>
+<p>As an example here I'm fetching the Envoy config from a very small environment with sidecar injection disabled and it is &gt; 200kb of JSON. By contrast, have you ever seen an <code>nginx.conf</code> file that was over 15kb?</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>$ istioctl proxy-config all istio-ingressgateway-56558c9fd7-x24kb -ojson | wc -c</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>222104</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
-<p>TODO: - someting about the structure part</p>
 <p>Two key points:</p>
 <ul>
 <li><strong>Flexibility:</strong> Envoy provides a stunning amount of functionality, of which Istio only utilizes a subset. Features (and their many associated config options) are added to Envoy at a faster rate than Istio adopts them.</li>
