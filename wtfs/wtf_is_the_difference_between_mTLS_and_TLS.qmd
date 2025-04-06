@@ -15,9 +15,9 @@ description: "&nbsp;"
 
 ### Certificates
 
-TLS and mTLS both rely on [certificates](https://en.wikipedia.org/wiki/X.509) which contain some identity information and a key used encrypt data in transit. The validity of a certificate can be verified by checking if it has been [signed](https://en.wikipedia.org/wiki/Digital_signature) by a trusted key. Anyone can sign a certificate, but most clients will not trush a certificate which has been signed by just anyone. Browsers trust certificates which have been signed by members of the [certificate authority browser forum](https://cabforum.org/) and Istio sidecars trust certificates which have been signed by `istiod` [^1].
+TLS and mTLS both rely on [certificates](https://en.wikipedia.org/wiki/X.509) which contain some identity information and a key used to encrypt data in transit. The validity of a certificate can be verified by checking if it has been [signed](https://en.wikipedia.org/wiki/Digital_signature) by a trusted key. Anyone can sign a certificate, but most clients will not trush a certificate which has been signed by just anyone. Browsers trust certificates which have been signed by members of the [certificate authority browser forum](https://cabforum.org/) and Istio sidecars trust certificates which have been signed by `istiod` [^1].
 
-When a new pod in the mesh starts up, the sidecar container calls home to `istiod` and identifies itself using its Kubernetes service account token. `istiod` validates the token, and extracts the name of the service account and the namespace it exists in from the token metadata and then encodes it into the Subject Alternative Name field of a brand new certificate and returns it to the sidecar.
+When a new pod in the mesh starts up, the sidecar container calls home to `istiod` and identifies itself using its Kubernetes service account token. `istiod` validates the token, and extracts the name of the service account and the namespace it exists in from the token metadata and then encodes it into the Subject Alternative Name field of a brand new certificate, signs it, and returns it to the sidecar.
 
 ### TLS
 
