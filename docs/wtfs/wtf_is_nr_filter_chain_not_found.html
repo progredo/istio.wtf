@@ -143,6 +143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#wtf-is-a-filter-chain" id="toc-wtf-is-a-filter-chain" class="nav-link active" data-scroll-target="#wtf-is-a-filter-chain">WTF Is A Filter Chain?</a></li>
   <li><a href="#why-cant-it-be-found" id="toc-why-cant-it-be-found" class="nav-link" data-scroll-target="#why-cant-it-be-found">Why Can't It Be Found?</a></li>
   <li><a href="#now-what" id="toc-now-what" class="nav-link" data-scroll-target="#now-what">Now What?</a></li>
+  <li><a href="#what-about-sidecars" id="toc-what-about-sidecars" class="nav-link" data-scroll-target="#what-about-sidecars">What About Sidecars?</a></li>
   </ul>
 </nav>
     </div>
@@ -210,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>IF tls.SNI == "foo.com" THEN</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  decrypt_with("./foo.pem")</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ELSE</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  route_to("default_upstream.io")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  route_to("backend.default.svc.cluster.local")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <figcaption class="figure-caption">Figure&nbsp;3: Pseudocode. Envoy config looks nothing like this.</figcaption>
 </figure>
 </div>
@@ -230,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="now-what" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="now-what">Now What?</h3>
-<p>Assuming your <code>Gateway</code> and <code>VirtualService</code> (or <code>HTTPRoute</code> if you're going Gateway API) resources are all correct, the most likely culprit is that your client application is not actually sending the correct SNI during the TLS handshake. Let me guess, where you trying something like this?</p>
+<p>Assuming your <code>Gateway</code> and <code>VirtualService</code> (or <code>HTTPRoute</code> if you're going Gateway API) resources are all correct, the most likely culprit is that your client application is not actually sending the correct SNI during the TLS handshake. Let me guess, were you trying something like this?</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>$ curl --header "host: yourdomain.com" https://&lt;your_ingress_gw_ip_here&gt;</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>curl: (35) Recv failure: Connection reset by peer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>And then you get something like this in your ingress gateway logs?</p>
@@ -304,6 +305,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Even with the triple <code>-vvv</code> curl doesn't actually parse out the TLS client hello, but if you look closely at the hex dump you can see the DNS override method includes the string <code>istio.wtf</code> while spoofing the host header doesn't.</p>
+</section>
+<section id="what-about-sidecars" class="level3">
+<h3 class="anchored" data-anchor-id="what-about-sidecars">What About Sidecars?</h3>
+<p>It is also possible, though less common, to see this error show up in sidecars with pod-to-pod traffic when mTLS is set to STRICT mode. Why would a sidecar fail to send the correct mTLS handshake? The main reason is if it has been configured to ignore some outgoing traffic and allow it to make outbound connections into the mesh which are <strong>not</strong> mTLS encrypted. When this happens, a plaintext connection will arrive at a sidecar which is expecting encrypted traffic, and the result is NR filter chain not found.</p>
+<p>One way this could happen is if the <a href="https://istio.io/latest/docs/reference/config/annotations/#SidecarTrafficExcludeOutboundPorts"><code>excludeOutboundPorts</code> annotation</a> has been placed on the pod making the client connection. This annotation tells the sidecar to ignore traffic being sent to a specific port. If this includes traffic which the destination pod expects to be mTLS encrypted, you'll wind up with NR filter chain not found.</p>
+<p>Another way this can happen is if the containerized process is running as uid:gid 1337:1337. This is a special user/group used by Istio itself, so all traffic created by this user/group bypasses the proxy.</p>
 
 
 </section>

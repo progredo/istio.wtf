@@ -31,7 +31,7 @@ Not long after users got accustomed to building out complex filter chains they w
 IF tls.SNI == "foo.com" THEN
   decrypt_with("./foo.pem")
 ELSE
-  route_to("default_upstream.io")
+  route_to("backend.default.svc.cluster.local")
 ```
 
 Pseudocode. Envoy config looks nothing like this.
@@ -57,7 +57,7 @@ ELSE
 
 ### Now What?
 
-Assuming your `Gateway` and `VirtualService` (or `HTTPRoute` if you're going Gateway API) resources are all correct, the most likely culprit is that your client application is not actually sending the correct SNI during the TLS handshake. Let me guess, where you trying something like this?
+Assuming your `Gateway` and `VirtualService` (or `HTTPRoute` if you're going Gateway API) resources are all correct, the most likely culprit is that your client application is not actually sending the correct SNI during the TLS handshake. Let me guess, were you trying something like this?
 
 ```default
 $ curl --header "host: yourdomain.com" https://<your_ingress_gw_ip_here>
@@ -150,3 +150,11 @@ Overriding DNS resolution.
 :::
 
 Even with the triple `-vvv` curl doesn't actually parse out the TLS client hello, but if you look closely at the hex dump you can see the DNS override method includes the string `istio.wtf` while spoofing the host header doesn't.
+
+### What About Sidecars?
+
+It is also possible, though less common, to see this error show up in sidecars with pod-to-pod traffic when mTLS is set to STRICT mode. Why would a sidecar fail to send the correct mTLS handshake? The main reason is if it has been configured to ignore some outgoing traffic and allow it to make outbound connections into the mesh which are **not** mTLS encrypted. When this happens, a plaintext connection will arrive at a sidecar which is expecting encrypted traffic, and the result is NR filter chain not found.
+
+One way this could happen is if the [`excludeOutboundPorts` annotation](https://istio.io/latest/docs/reference/config/annotations/#SidecarTrafficExcludeOutboundPorts) has been placed on the pod making the client connection. This annotation tells the sidecar to ignore traffic being sent to a specific port. If this includes traffic which the destination pod expects to be mTLS encrypted, you'll wind up with NR filter chain not found.
+
+Another way this can happen is if the containerized process is running as uid:gid 1337:1337. This is a special user/group used by Istio itself, so all traffic created by this user/group bypasses the proxy.
