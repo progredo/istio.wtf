@@ -109,9 +109,19 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#pod-to-pod-traffic" id="toc-pod-to-pod-traffic" class="nav-link active" data-scroll-target="#pod-to-pod-traffic">Pod to Pod Traffic</a></li>
+  <li><a href="#the-protocols-themselves" id="toc-the-protocols-themselves" class="nav-link active" data-scroll-target="#the-protocols-themselves">The Protocols Themselves</a>
+  <ul class="collapse">
+  <li><a href="#certificates" id="toc-certificates" class="nav-link" data-scroll-target="#certificates">Certificates</a></li>
+  <li><a href="#tls" id="toc-tls" class="nav-link" data-scroll-target="#tls">TLS</a></li>
+  <li><a href="#mtls" id="toc-mtls" class="nav-link" data-scroll-target="#mtls">mTLS</a></li>
+  </ul></li>
+  <li><a href="#how-istio-uses-them" id="toc-how-istio-uses-them" class="nav-link" data-scroll-target="#how-istio-uses-them">How Istio Uses Them</a>
+  <ul class="collapse">
+  <li><a href="#pod-to-pod-traffic" id="toc-pod-to-pod-traffic" class="nav-link" data-scroll-target="#pod-to-pod-traffic">Pod to Pod Traffic</a></li>
+  <li><a href="#authorization" id="toc-authorization" class="nav-link" data-scroll-target="#authorization">Authorization</a></li>
   <li><a href="#getting-traffic-into-your-cluster" id="toc-getting-traffic-into-your-cluster" class="nav-link" data-scroll-target="#getting-traffic-into-your-cluster">Getting Traffic Into Your Cluster</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -158,15 +168,36 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<section id="the-protocols-themselves" class="level2">
+<h2 class="anchored" data-anchor-id="the-protocols-themselves">The Protocols Themselves</h2>
+<section id="certificates" class="level3">
+<h3 class="anchored" data-anchor-id="certificates">Certificates</h3>
+<p>TLS and mTLS both rely on <a href="https://en.wikipedia.org/wiki/X.509">certificates</a> which contain some identity information and a key used to encrypt data in transit. The validity of a certificate can be verified by checking if it has been <a href="https://en.wikipedia.org/wiki/Digital_signature">signed</a> by a trusted key. Anyone can sign a certificate, but most clients will not trush a certificate which has been signed by just anyone. Browsers trust certificates which have been signed by members of the <a href="https://cabforum.org/">certificate authority browser forum</a> and Istio sidecars trust certificates which have been signed by <code>istiod</code> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>When a new pod in the mesh starts up, the sidecar container calls home to <code>istiod</code> and identifies itself using its Kubernetes service account token. <code>istiod</code> validates the token, and extracts the name of the service account and the namespace it exists in from the token metadata and then encodes it into the Subject Alternative Name field of a brand new certificate, signs it, and returns it to the sidecar.</p>
+</section>
+<section id="tls" class="level3">
+<h3 class="anchored" data-anchor-id="tls">TLS</h3>
+<p>TLS provides two things: it encrypts data in transit between a client and a server, and it proves the identity of the server to the client.</p>
+</section>
+<section id="mtls" class="level3">
+<h3 class="anchored" data-anchor-id="mtls">mTLS</h3>
+<p>Mutual TLS also encrypts data in transit, and it also proves the identity of the server to the client, but it then goes on to prove the identiy of the client to the server.</p>
+</section>
+</section>
+<section id="how-istio-uses-them" class="level2">
+<h2 class="anchored" data-anchor-id="how-istio-uses-them">How Istio Uses Them</h2>
 <section id="pod-to-pod-traffic" class="level3">
 <h3 class="anchored" data-anchor-id="pod-to-pod-traffic">Pod to Pod Traffic</h3>
-<p>When traffic is sent between two pods which are part of an Istio mesh and mutual TLS is enabled (which is the default), both the <a href="wtf_is_upstream_and_downstream.html">downstream and the upstream</a> pods will exchange TLS certificates in order to verify the identity of the other pod. Cloudflare has a <a href="https://www.cloudflare.com/en-ca/learning/access-management/what-is-mutual-tls/">decent overview</a> of the mechanics of this process.</p>
-<p>In an Istio mesh the certificates used for this verification come from Istio <em>itself</em> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. At installation time Istio creates a Kubernetes secret in the <code>istio-system</code> namespace which contains a self-signed root CA with a 10 year expiry date which it uses to sign all the mTLS client certs it generates. Each pod in the mesh gets its own mTLS client cert and a copy of the Root CA to use for verification. When it sees an incoming request which presents a client cert, it checks the signature to ensure it was signed by the trusted CA and then proceeds to process the traffic.</p>
+<p>When traffic is sent between two pods which are part of the mesh and mutual TLS is enabled (which is the default), both the <a href="wtf_is_upstream_and_downstream.html">downstream and the upstream</a> pods will exchange certificates in order to verify each others identity and encrypt traffic in transit.</p>
+</section>
+<section id="authorization" class="level3">
+<h3 class="anchored" data-anchor-id="authorization">Authorization</h3>
+<p>Users can optionally <a href="https://istio.io/latest/docs/concepts/security/#authorization-policies">enforce policies</a> on pod-to-pod traffic such as blocking all traffic from a particular namespace or service account, by using the information which <code>istiod</code> added into the certificates SAN field.</p>
 </section>
 <section id="getting-traffic-into-your-cluster" class="level3">
 <h3 class="anchored" data-anchor-id="getting-traffic-into-your-cluster">Getting Traffic Into Your Cluster</h3>
-<p>When traffic from the internet arrives at an Istio cluster it is not protected by mTLS. Random web browsers don't trust self signed certs generated by Istio at installation time so they can't participate in mesh traffic. They need something to turn their non-mTLS traffic into mesh traffic protected by mTLS and that something is called an ingress gateway.</p>
-<p>Fortunately, Istio gateways support plain old non-mutual TLS for incoming traffic, which is convenient because web browsers do prefer <a href="https://www.eff.org/deeplinks/2021/09/https-actually-everywhere">TLS everywhere</a>. For plain old non-mutual TLS traffic, Istio (like every other web server out there) requires some other authority to mint the certificates it will use. This could be from a commercial vendor like Digicert or a non-profit like LetsEncrypt. The bottom line is that for external clients to communicate securely with an Istio ingress gateway, someone needs to give the gateway a cert to use. Istio cannot mint these itself.</p>
+<p>When traffic from the internet arrives at an Istio cluster it is not protected by mTLS. Random web browsers can't talk to <code>istiod</code> to request a client certificate, and they don't trust certs signed by <code>istiod</code>, so they can't participate in mesh traffic. They need something to turn their TLS traffic into mesh traffic protected by mTLS and that something is called an ingress gateway.</p>
+<p>Fortunately, Istio gateways can accept plain old non-mutual TLS for incoming traffic, which is convenient because web browsers do prefer <a href="https://www.eff.org/deeplinks/2021/09/https-actually-everywhere">TLS everywhere</a>. For plain old non-mutual TLS traffic, Istio (like every other web server out there) requires some other authority to mint the certificates it will use. This could be from a commercial vendor like Digicert or a non-profit like LetsEncrypt. The bottom line is that for external clients to communicate securely with an Istio ingress gateway, someone needs to give the gateway a cert to use. Istio cannot mint these itself.</p>
 <p>This process could involve just getting a <code>.pem</code> file from a provider and manually feeding it to <code>kubectl create secret ...</code> or it could leverage a tool like <a href="https://cert-manager.io/">Cert Manager</a> to automatically provision certs from providers who support such tooling.</p>
 <p>In this configuration traffic is protected by vanilla TLS on the way from the client to the ingress gateway, and then mTLS on the way from the ingress gateway to the upstream pod.</p>
 <div class="cell" data-layout-align="center">
@@ -198,12 +229,13 @@ linkStyle 1 stroke:lightgreen
 
 
 </section>
+</section>
 
 
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>By default Istio mints its own mTLS client certs and distributes them to each pod in the mesh, but it can also integrate with other projects which manage workload identites like <a href="https://istio.io/latest/docs/ops/integrations/spire/">SPIRE</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>By default Istio mints its own mTLS client certs and distributes them to each pod in the mesh, but it can also integrate with other projects capable of minting certificates like <a href="https://istio.io/latest/docs/ops/integrations/spire/">SPIRE</a> and <a href="https://github.com/cert-manager/istio-csr">cert-manager</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
