@@ -29,7 +29,7 @@ Istio uses iptables to transparently redirect traffic from an application contai
 :::
 
 ::: {style="text-align: center"}
-> Above images are from [the Merbridge docs](https://merbridge.io/docs/overview/), which are based on [these slides](https://www.slideshare.net/slideshow/accelerating-envoy-and-istio-with-cilium-and-the-linux-kernel/) from Thomas Graf's [2018 Kubecon talk](https://youtu.be/ER9eIXL2_14?t=745) "Accelerating Envoy with the Linux Kernel".
+> Above images are from [the Merbridge docs](https://merbridge.io/docs/overview/), which are based on [these slides](https://www.slideshare.net/slideshow/accelerating-envoy-and-istio-with-cilium-and-the-linux-kernel/96059378) from Thomas Graf's [2018 Kubecon talk](https://youtu.be/ER9eIXL2_14?t=745) "Accelerating Envoy with the Linux Kernel".
 
 :::
 
