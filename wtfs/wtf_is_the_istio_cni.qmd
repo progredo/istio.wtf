@@ -18,7 +18,7 @@ The Container Network Interface is the [standard](https://github.com/containerne
 The workflow goes something like:
 
 1. Something asks the runtime to launch a container.
-1. Once the container starts, the runtime passes some information like the name of the network interface assigned to the container to the CNI plugin.
+1. Once the container starts the runtime passes some information to the CNI plugin, things like the name of the network interface assigned to the container so the plugin can do its thing.
 1. The CNI plugin executes and returns control to the container runtime.
 
 **Here's the important part:** usually when the CNI plugin executes it is setting up network connectivity for the container, but _not always._

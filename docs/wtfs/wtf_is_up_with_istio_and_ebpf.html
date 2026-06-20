@@ -180,7 +180,7 @@ Figure&nbsp;1: A service mesh and a programmable kernel walk into a bar.
 <section id="why-would-istio-use-ebpf" class="level3">
 <h3 class="anchored" data-anchor-id="why-would-istio-use-ebpf">Why <em>would</em> Istio use eBPF?</h3>
 <p>Istio uses iptables to transparently redirect traffic from an application container into a sidecar proxy container so it can do all the fancy service mesh stuff with that traffic, however the iptables redirection adds some (small but nonzero) latency overhead. At large scales that overhead adds up. To alleviate this overhead eBPF can be used to bypass much of the Linux network stack for a nice performance boost. In fact there is a CNCF project called <a href="https://merbridge.io/">Merbridge</a> that does exactly that for Kuma, Linkerd, and Istio.</p>
-<div id="fix-datapath" class="quarto-layout-panel" data-layout-ncol="2" style="text-align: center">
+<div id="fix-datapath" class="quarto-layout-panel" style="text-align: center" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div id="fig-iptables" class="quarto-float quarto-figure quarto-figure-center anchored">

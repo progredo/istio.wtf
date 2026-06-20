@@ -178,7 +178,7 @@ Figure&nbsp;1: Container with a network interface.
 <p>The workflow goes something like:</p>
 <ol type="1">
 <li>Something asks the runtime to launch a container.</li>
-<li>Once the container starts, the runtime passes some information like the name of the network interface assigned to the container to the CNI plugin.</li>
+<li>Once the container starts the runtime passes some information to the CNI plugin, things like the name of the network interface assigned to the container so the plugin can do its thing.</li>
 <li>The CNI plugin executes and returns control to the container runtime.</li>
 </ol>
 <p><strong>Here's the important part:</strong> usually when the CNI plugin executes it is setting up network connectivity for the container, but <em>not always.</em></p>
