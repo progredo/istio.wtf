@@ -17,4 +17,4 @@ Throw me a high five if you see me at Kubecon, share what you've learned with a 
 
 ### WTF should I do if my question isn't answered here?
 
-Check out [this lightning talk](https://colocatedeventseu2025.sched.com/event/1u5iB/cl-lightning-talk-how-to-get-istio-help-rob-salmond-superorbital) from Istio Day 2025 for a quick summary of how to get help.
+Check out [this lightning talk](https://www.youtube.com/watch?v=WNqEQrrQnMs) from Istio Day 2025 for a quick summary of how to get help.
